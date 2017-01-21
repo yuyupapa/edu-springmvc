@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="namoo.club.regist.persist.mybatis.mapper.TownerMapper">
+    
+    <insert id="insertTowner" parameterType="Towner" useGeneratedKeys="true" keyProperty="id">
+    	INSERT INTO towner (towner_name, email, password, gender, reg_date)
+    	VALUES (
+    		#{name}
+    		,#{email}
+    		,#{password}
+    		,#{gender,javaType=Gender,jdbcType=CHAR}
+    		,SYSDATE()
+    	)
+    </insert>
+    
+    <delete id="deleteTowner" parameterType="string">
+    	DELETE FROM towner WHERE towner_id = #{townerId}
+    </delete>
+    
+    <update id="updateTowner" parameterType="Towner">
+    	UPDATE towner
+    	SET 
+    		towner_name = #{name}, 
+    		email = #{email}, 
+    		password = #{password}, 
+    		gender = #{gender,javaType=Gender,jdbcType=CHAR} 
+    	WHERE towner_id = ${id}
+    </update>
+    
+    
+    <resultMap type="Towner" id="result-towner">
+    	<id     property="id"        column="towner_id"    javaType="string" />
+    	<result property="name"      column="towner_name"  javaType="string" />
+    	<result property="email"     column="email"        javaType="string" />
+    	<result property="password"  column="password"     javaType="string" />
+    	<result property="gender"    column="gender"       javaType="Gender" jdbcType="CHAR" />
+    </resultMap>
+    
+    <select id="selectTowner" parameterType="string" resultMap="result-towner">
+    	SELECT towner_id, towner_name, email, password, gender
+    	FROM towner 
+    	WHERE towner_id = #{townerId}
+    </select>
+    
+    <select id="selectTownerByEmail" parameterType="string" resultMap="result-towner">
+    	SELECT towner_id, towner_name, email, password, gender
+    	FROM towner 
+    	WHERE email = #{email}
+    </select>
+    
+    <select id="selectAllTowners" resultMap="result-towner">
+    	SELECT towner_id, towner_name, email, password, gender
+    	FROM towner 
+    </select>
+    
+    
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   
+<mapper namespace="namoo.club.regist.persist.mybatis.mapper.ClubMemberMapper">
+    
+    <insert id="insertClubMember" parameterType="map" keyProperty="id">
+    	INSERT INTO club_member (member_id, club_id, towner_id, reg_date)
+    	VALUES (
+    		#{member.memberId}
+    		,#{clubId}
+    		,#{member.towner.id}
+    		,SYSDATE()
+    	)
+    </insert>
+    
+    <delete id="deleteClubMember" parameterType="map">
+    	DELETE FROM club_member WHERE club_id = #{clubId} AND club_id = (
+    		SELECT cm.club_id
+    		FROM club_member cm
+    		JOIN towner tw ON cm.towner_id = tw.towner_id
+    		WHERE tw.email = #{memberEmail}
+    	)
+    </delete>
+    
+    <resultMap type="ClubMember" id="result-club-member">
+    	<id     property="memberId"        column="member_id"    javaType="string" />
+    	<result property="clubId"          column="club_id"      javaType="string" />
+    	<association property="towner" javaType="Towner">
+   			<result property="id"          column="towner_id"    javaType="string" />
+   			<result property="name"        column="towner_name"  javaType="string" />
+   			<result property="email"       column="email"        javaType="string" />
+   			<result property="password"    column="password"     javaType="string" />
+    		<result property="gender"      column="gender"       javaType="Gender" jdbcType="CHAR" />
+    	</association>
+    </resultMap>
+    
+    <resultMap type="Club" id="result-club">
+    	<id     property="id"              column="club_id"      javaType="string" />
+    	<result property="name"            column="club_name"    javaType="string" />
+    	<result property="description"     column="description"  javaType="string" />
+    	<result property="openDate"        column="open_date"    javaType="date" />
+    	<association property="admin" javaType="ClubAdmin">
+    		<association property="towner" javaType="Towner">
+    			<result property="id"        column="towner_id"     javaType="string" />
+    			<result property="name"      column="towner_name"   javaType="string" />
+    			<result property="email"     column="email"         javaType="string" />
+    			<result property="password"  column="password"      javaType="string" />
+    			<result property="gender"    column="gender"        javaType="Gender" jdbcType="CHAR" />
+    		</association>
+    	</association>
+    </resultMap>
+    
+    
+    <select id="selectClubMember" parameterType="map" resultMap="result-club-member">
+    	SELECT
+    		cm.member_id, cm.club_id,
+    		cm.towner_id, tw.towner_name, tw.email, tw.password, tw.gender
+    	FROM    club_member cm
+    	JOIN    towner tw ON cm.towner_id = tw.towner_id
+    	WHERE   cm.club_id = #{clubId} AND tw.email = #{memberEmail}
+    </select>
+    
+    <select id="selectAllClubMember" parameterType="string" resultMap="result-club-member">
+    	SELECT
+    		cm.member_id, cm.club_id,
+    		cm.towner_id, tw.towner_name, tw.email, tw.password, tw.gender
+    	FROM    club_member cm
+    	JOIN    towner tw ON cm.towner_id = tw.towner_id
+    	WHERE   cm.club_id = #{clubId}
+    </select>
+    
+    <select id="selectJoinedClub" parameterType="string"  resultMap="result-club">
+    	SELECT
+    		c.club_id, c.club_name, c.description, c.open_date,
+    		adm.towner_id, adm.towner_name, adm.email, adm.password, adm.gender
+    	FROM   club c
+    	JOIN   club_member cm ON c.club_id = cm.club_id
+    	JOIN   towner mem ON cm.towner_id = mem.towner_id
+    	JOIN   towner adm ON c.admin_id = adm.towner_id
+    	WHERE  mem.email = #{memberEmail}
+    </select>
+    
+    <select id="selectUnjoinedClub" parameterType="string"  resultMap="result-club">
+    	SELECT
+    		c.club_id, c.club_name, c.description, c.open_date,
+    		adm.towner_id, adm.towner_name, adm.email, adm.password, adm.gender
+    	FROM   club c
+    	JOIN   towner adm ON c.admin_id = adm.towner_id
+    	WHERE  NOT EXISTS ( 
+    		SELECT * 
+    		FROM club_member cm 
+    		JOIN towner tw ON cm.towner_id = tw.towner_id
+    		WHERE cm.club_id = c.club_id AND tw.email = #{memberEmail} 
+    	)
+    </select>
+    
+    
+    <select id="countMembers" parameterType="string" resultType="int">
+    	SELECT COUNT(member_id)
+    	FROM   club_member
+    	WHERE  club_id = #{clubId}
+    </select>
+    
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+   "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<properties resource="test-jdbc.properties" />
+
+    <typeAliases>
+        <typeAlias type="namoo.club.regist.domain.entity.Towner"     alias="Towner" />
+        <typeAlias type="namoo.club.regist.domain.entity.Club"       alias="Club" />
+        <typeAlias type="namoo.club.regist.domain.entity.ClubAdmin"  alias="ClubAdmin" />
+        <typeAlias type="namoo.club.regist.domain.entity.ClubMember" alias="ClubMember" />
+        <typeAlias type="namoo.club.util.enumtype.Gender"       alias="Gender" />
+    </typeAliases>
+    
+    <typeHandlers>
+        <typeHandler javaType="Gender" jdbcType="CHAR"
+            handler="namoo.club.regist.persist.mybatis.typehandler.GenderToCharTypeHandler"/>
+    </typeHandlers>
+    
+    <environments default="Tester">
+    	<environment id="Tester">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${database.test.driver}"/>
+                <property name="url" value="${database.test.url}"/>
+                <property name="username" value="${database.test.username}"/>
+                <property name="password" value="${database.test.password}"/>
+            </dataSource>
+    	</environment>
+    </environments>
+    
+    <mappers>
+		<mapper class="namoo.club.regist.persist.mybatis.mapper.ClubMapper"/>
+		<mapper class="namoo.club.regist.persist.mybatis.mapper.ClubMemberMapper"/>
+		<mapper class="namoo.club.regist.persist.mybatis.mapper.TownerMapper"/>
+	</mappers>
+    
+</configuration>

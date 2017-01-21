@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+
+	<bean id="song" class="namoo.spring.aop.Song">
+		<constructor-arg value="Sweet Home Alabama" />
+	</bean>
+
+	<bean id="bo" class="namoo.spring.aop.Singer">
+		<constructor-arg value="Bo Bice" />
+		<constructor-arg ref="song" />
+	</bean>
+
+	<bean id="monitor" class="namoo.spring.aop.Monitor" />
+
+	<!--  
+	<aop:config>
+		<aop:aspect ref="monitor">
+			<aop:before pointcut="execution(* *.perform(..))" method="greetPerformer" />
+			<aop:after-returning pointcut="execution(* *.perform(..))" method="saySomethingNice" />
+			<aop:after-throwing pointcut="execution(* *.perform(..))" method="saySomethingAnyway" />
+		</aop:aspect>
+	</aop:config>
+	-->
+	
+	<context:component-scan base-package="namoo.spring.aop" /> 
+	<aop:aspectj-autoproxy />
+
+</beans>

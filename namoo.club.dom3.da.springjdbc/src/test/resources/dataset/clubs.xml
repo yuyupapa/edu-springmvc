@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+	<towner towner_id="1" towner_name="김현오" email="hyunohkim@nextree.co.kr" password="1234" gender="M" reg_date="2014-06-14 11:27:30" />
+
+	<club club_id="1" club_name="축구 클럽" description="축구로 몸과 마음을 단련하세요." open_date="2014-06-10" admin_id="1" />
+</dataset>
